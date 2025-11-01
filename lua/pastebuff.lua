@@ -34,7 +34,7 @@ end
 ---Get the contents of the specified buffer name
 ---@param buf_name string
 function pastebuff.get(buf_name)
-  vim.notify(string.format("get: %s", buf_name))
+  vim.notify(string.format("aae: %d", convert_to_bin(5)))
 end
 
 ---Set the contents of the specified buffer with value
@@ -48,12 +48,26 @@ function convert_to_bin(num)
   -- cant be negative
   -- cant be higher than u32::max
   -- is int
+  if (not isInteger(num)) or num < 0 then
+    return
+  end
+
+  local rem = num
+  local byte0 = math.floor(rem / (255 * 255 * 255))
+  rem = rem % (255 * 255 * 255)
+  local byte1 = math.floor(rem / (255 * 255))
+  rem = rem % (255 * 255)
+  local byte2 = math.floor(rem / 255)
+  local byte3 = rem % 255
+  return string.char(byte0) .. string.char(byte1) .. string.char(byte2) .. string.char(byte3)
 
 end
 
 function isInteger(num)
   return type(num) == "number" and math.floor(num) == num
 end
+
+vim.notify(string.format("bin: %s", convert_to_bin(5)))
 
 vim.api.nvim_create_user_command(
   "PasteBuffGet",
